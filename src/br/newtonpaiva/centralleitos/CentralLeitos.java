@@ -7,6 +7,9 @@ package br.newtonpaiva.centralleitos;
 
 import br.newtonpaiva.centralleitos.modelos.Leito;
 import br.newtonpaiva.centralleitos.modelos.Ocupacao;
+import br.newtonpaiva.centralleitos.modelos.Paciente;
+import br.newtonpaiva.centralleitos.modelos.Sexo;
+import br.newtonpaiva.centralleitos.modelos.TipoSanguineo;
 import java.util.GregorianCalendar;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -41,6 +44,17 @@ public class CentralLeitos {
         ocup.setLeito(leito);
         
         em.persist(ocup);
+        
+        
+        Paciente p = new Paciente();
+        p.setNome("Tarley Lana");
+        p.setAltura(1.79);
+        p.setCpf("000.444.888-68");
+        p.setEmail("tarley.lana@gmail.com");
+        p.setSexo(Sexo.M);
+        p.setTipoSanguineo(TipoSanguineo.O);
+        
+        em.persist(p);
         
         
         em.getTransaction().commit();
