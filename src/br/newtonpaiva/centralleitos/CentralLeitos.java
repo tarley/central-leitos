@@ -8,9 +8,12 @@ package br.newtonpaiva.centralleitos;
 import br.newtonpaiva.centralleitos.modelos.Leito;
 import br.newtonpaiva.centralleitos.modelos.Ocupacao;
 import br.newtonpaiva.centralleitos.modelos.Paciente;
+import br.newtonpaiva.centralleitos.modelos.Procedimento;
 import br.newtonpaiva.centralleitos.modelos.Sexo;
 import br.newtonpaiva.centralleitos.modelos.TipoSanguineo;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
@@ -44,6 +47,21 @@ public class CentralLeitos {
         ocup.setLeito(leito);
         
         em.persist(ocup);
+        
+        Procedimento proc1 = new Procedimento();
+        proc1.setDescricao("Exame de sangue");
+        proc1.setDuracaoMediaEmMinutos(90L);
+        
+        em.persist(proc1);
+        
+        // Associa uma lista de procedimentos a uma ocupação especifica
+        //List<Procedimento> procedimentos = new ArrayList<>();
+        //procedimentos.add(proc1);
+        
+        //ocup.setProcedimentos(procedimentos);
+        ocup.addProcedimento(proc1);
+        em.persist(ocup);
+        
         
         
         Paciente p = new Paciente();

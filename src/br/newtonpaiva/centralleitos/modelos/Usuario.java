@@ -5,6 +5,7 @@
  */
 package br.newtonpaiva.centralleitos.modelos;
 
+import com.sun.istack.internal.NotNull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,10 +30,10 @@ public class Usuario {
     
     @Column
     private String senha;
-    
     @Column
     private Boolean ativo;
 
+    
     /**
      * @return the id
      */

@@ -5,13 +5,16 @@
  */
 package br.newtonpaiva.centralleitos.modelos;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,6 +40,17 @@ public class Ocupacao {
     @ManyToOne
     @JoinColumn
     private Leito leito;
+    
+    @ManyToMany
+    private List<Procedimento> procedimentos;
+    
+    public void addProcedimento(Procedimento proc) {
+        if(procedimentos == null)
+            procedimentos = new ArrayList<>();
+        
+        procedimentos.add(proc);
+    }
+    
     
     /**
      * @return the id
@@ -92,6 +106,20 @@ public class Ocupacao {
      */
     public void setLeito(Leito leito) {
         this.leito = leito;
+    }
+
+    /**
+     * @return the procedimentos
+     */
+    public List<Procedimento> getProcedimentos() {
+        return procedimentos;
+    }
+
+    /**
+     * @param procedimentos the procedimentos to set
+     */
+    public void setProcedimentos(List<Procedimento> procedimentos) {
+        this.procedimentos = procedimentos;
     }
 
 }

@@ -20,6 +20,8 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
 
     private final EntityManager em;
     
+    private Integer idUsuario;
+    
     /**
      * Creates new form TelaCrudUsuario
      */
@@ -52,7 +54,7 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
         btnBuscar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblUsuarios = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -87,8 +89,13 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
         });
 
         btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblUsuarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -111,7 +118,12 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        tblUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblUsuariosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblUsuarios);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -182,6 +194,8 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
 
     private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
         // TODO add your handling code here:
+        this.idUsuario = null;
+        
         txtNome.setText("");
         txtLogin.setText("");
         txtSenha.setText("");
@@ -194,18 +208,26 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
         // TODO add your handling code here:
         em.getTransaction().begin();
         
-        Usuario u = new Usuario();
+        Usuario u;
+        if(this.idUsuario == null) {
+            u = new Usuario();            
+            em.persist(u); 
+        } else {
+            u = em.find(Usuario.class, idUsuario);
+            em.merge(u);
+        }
+        
         u.setNome(txtNome.getText());
         u.setLogin(txtLogin.getText());
         u.setSenha(String.valueOf(txtSenha.getPassword()));
-        u.setAtivo(cbxAtivo.isSelected());
-        
-        em.persist(u);        
+        u.setAtivo(cbxAtivo.isSelected()); 
+               
         em.getTransaction().commit();
         
         JOptionPane
             .showMessageDialog(this, "Usuario regitrado com sucesso");
         btnLimpar.doClick();
+        btnBuscar.doClick();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
@@ -215,7 +237,7 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
                 .getResultList();
         
         DefaultTableModel model = 
-            (DefaultTableModel) jTable1.getModel();
+            (DefaultTableModel) tblUsuarios.getModel();
         
         model.setRowCount(0);
         for(Usuario u : usuarios) {
@@ -230,6 +252,52 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
         }
         
     }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        // TODO add your handling code here:
+        int row = tblUsuarios.getSelectedRow();
+        
+        if(row == -1) {
+            JOptionPane
+                .showMessageDialog(
+                    this, "Favor selecionar um usuário.");
+        } else {
+            Integer id = (Integer) tblUsuarios
+                                        .getModel()
+                                        .getValueAt(row, 0);
+            
+            Usuario u = em.find(Usuario.class, id);
+            
+            em.getTransaction().begin();
+            em.remove(u);
+            em.getTransaction().commit();
+            
+            btnBuscar.doClick();
+            
+            JOptionPane
+                .showMessageDialog(
+                    this, "Usuário excluido com sucesso.");
+        }
+        
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void tblUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUsuariosMouseClicked
+        // TODO add your handling code here:
+        int row = tblUsuarios.getSelectedRow();
+        
+        if(row > -1 && evt.getClickCount() == 2) {
+            Integer id = (Integer) tblUsuarios
+                                        .getModel()
+                                        .getValueAt(row, 0);
+            
+            Usuario u = em.find(Usuario.class, id);
+            this.idUsuario = u.getId();
+            txtNome.setText(u.getNome());
+            txtLogin.setText(u.getLogin());
+            txtSenha.setText(u.getSenha());
+            cbxAtivo.setSelected(u.getAtivo());
+        }
+    }//GEN-LAST:event_tblUsuariosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -283,7 +351,7 @@ public class TelaCrudUsuario extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tblUsuarios;
     private javax.swing.JTextField txtLogin;
     private javax.swing.JTextField txtNome;
     private javax.swing.JPasswordField txtSenha;
